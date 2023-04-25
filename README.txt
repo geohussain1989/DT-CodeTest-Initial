@@ -1,45 +1,81 @@
-Do at least ONE of the following tasks: refactor is mandatory. Write tests is optional, will be good bonus to see it. 
-Please do not invest more than 2-4 hours on this.
-Upload your results to a Github repo, for easier sharing and reviewing.
+********************************************************
+A. My thought about the code
+********************************************************
 
-Thank you and good luck!
+Code is fine but need some improvement 
 
-
-
-Code to refactor
-=================
-1) app/Http/Controllers/BookingController.php
-2) app/Repository/BookingRepository.php
-
-Code to write tests (optional)
-=====================
-3) App/Helpers/TeHelper.php method willExpireAt
-4) App/Repository/UserRepository.php, method createOrUpdate
+1- Completely follow repository interface
+2- Do not need to get user id from request object
+3- Some of the controller mythod not following repository approach and get data from model query.
 
 
-----------------------------
+if ($time || $distance) {
+    $affectedRows = Distance::where('job_id', '=', $jobid)->update(['distance' => $distance, 'time' => $time]);
+}
 
-What I expect in your repo:
-
-X. A readme with:   Your thoughts about the code. What makes it amazing code. Or what makes it ok code. Or what makes it terrible code. How would you have done it. Thoughts on formatting, structure, logic.. The more details that you can provide about the code (what's terrible about it or/and what is good about it) the easier for us to assess your coding style, mentality etc
-
-And 
-
-Y.  Refactor it if you feel it needs refactoring. The more love you put into it. The easier for us to asses your thoughts, code principles etc
+if ($admincomment || $session || $flagged || $manually_handled || $by_admin) {
+    $affectedRows1 = Job::where('id', '=', $jobid)->update(['admin_comments' => $admincomment, 'flagged' => $flagged, 'session_time' => $session, 'manually_handled' => $manually_handled, 'by_admin' => $by_admin]);
+}
 
 
-IMPORTANT: Make two commits. First commit with original code. Second with your refactor so we can easily trace changes. 
+4- In Booking controller response should be in smiler formate  some where pass response object and some where string and some where array 
+I don't know how to pass failure response.
+
+response($response);
+return response('Record updated!');
+return response(['success' => 'Push sent']);
 
 
-NB: you do not need to set up the code on local and make the web app run. It will not run as its not a complete web app. This is purely to assess you thoughts about code, formatting, logic etc
+5. I use translation rather then pass string directly
+
+response('Record updated!');
 
 
-===== So expected output is a GitHub link with either =====
+6. In some methods there are unnecessary else conditions  like in distanceFeed method
 
-1. Readme described above (point X above) + refactored code 
-OR
-2. Readme described above (point X above) + refactored core + a unit test of the code that we have sent
 
-Thank you!
+****************************************************
+B. What makes it amazing code
+***************************************************
+
+Repository patters and the use of base repository so we can use common operation method and most places
+
+
+C. what makes it ok code
+
+*************************************************************************************************************
+D. what makes it terrible code
+*************************************************************************************************************
+
+In controller get the user id from request $request->get('user_id') what I suggest if user is already authenticated and we can extract all the
+user information including Id , so we do not need to get user id from the request.
+
+
+
+
+***************************************************************************************************************
+E. How would you have done it
+***************************************************************************************************************
+I have follow repository interface patters so if I did this code the I create following structure
+
+
+Artechure:
+
+Step 1: Create Interfaces directory with in app directory and create class BookingRepositoryInterface class and declear methods with type casting
+
+like
+
+Interface BookingRepositoryInterface{
+    
+    public function getUsersJobs(User $user_id);
+    public function acceptJob(AcceptJobRequest $request);
+
+    .....
+}
+
+and BookingRepository implement BookingRepositoryInterface
+
+
+
 
 
